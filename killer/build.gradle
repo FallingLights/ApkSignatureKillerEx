@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         minSdk 21
-        //noinspection OldTargetApi
+        //noinspection ExpiredTargetSdkVersion,OldTargetApi
         targetSdk 32
         externalNativeBuild {
             cmake {
@@ -19,6 +19,11 @@ android {
         }
         ndk {
             abiFilters = ["armeabi-v7a", "x86", "arm64-v8a", "x86_64"]
+        }
+        android {
+            buildFeatures {
+                buildConfig = true
+            }
         }
     }
 
