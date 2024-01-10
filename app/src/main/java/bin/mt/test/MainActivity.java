@@ -119,7 +119,7 @@ public class MainActivity extends Activity {
         return null;
     }
 
-
+    //
     private String md5(byte[] bytes) {
         if (bytes == null) {
             return "null";
