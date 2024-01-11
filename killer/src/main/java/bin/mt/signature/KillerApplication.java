@@ -29,7 +29,9 @@ public class KillerApplication extends Application {
     public static final String URL = "https://github.com/L-JINBIN/ApkSignatureKillerEx";
 
     static {
+        // Replace the following package name with your own
         String packageName = "bin.mt.signature";
+        // Replace the following signature data with your own
         String signatureData = "MIICwzCCAaugAwIBAgIERUjRgzANBgkqhkiG9w0BAQsFADASMRAwDgYDVQQDEwdBbmRyb2lkMB4X\n" +
                 "DTIyMTIyNDE0NDkzMloXDTQ3MTIxODE0NDkzMlowEjEQMA4GA1UEAxMHQW5kcm9pZDCCASIwDQYJ\n" +
                 "KoZIhvcNAQEBBQADggEPADCCAQoCggEBAKjVjd0eL4NPJW4uBR40hDkHtwdTQ7INP3hqgIs7U/kM\n" +

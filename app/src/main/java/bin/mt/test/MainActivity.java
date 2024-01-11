@@ -59,13 +59,31 @@ public class MainActivity extends Activity {
         append(sb, "From API: ", signatureFromAPI, signatureExpected.equals(signatureFromAPI) ? Color.BLUE : Color.RED);
         append(sb, "From APK: ", signatureFromAPK, signatureExpected.equals(signatureFromAPK) ? Color.BLUE : Color.RED);
         append(sb, "From SVC: ", signatureFromSVC, signatureExpected.equals(signatureFromSVC) ? Color.BLUE : Color.RED);
-
         // Of course, SVC is not absolutely safe, but relatively more reliable,
         // the actual use of the means need to be combined with more
+        append(sb, "Package Name: ", getAPKPackageName(), Color.BLACK);
 
         msg.setText(sb);
     }
 
+    /**
+     * Appends a header and value pair to a SpannableStringBuilder, applying a specified color to the text.
+     *
+     * This method begins by recording the current length of the SpannableStringBuilder `sb`, which
+     * marks the start point of the new text to be appended. It then appends the `header`, `value`, and
+     * a newline character to `sb`. After appending, it calculates the new length of `sb`, marking the
+     * end point of the appended text.
+     *
+     * A ForegroundColorSpan, with the specified `color`, is then applied to the text range from the
+     * recorded start point to the end point. This span sets the text color of the appended header and
+     * value. The span is exclusive-exclusive, meaning it applies to characters at the start index and
+     * up to, but not including, characters at the end index.
+     *
+     * @param sb The SpannableStringBuilder to which the text and color span are appended.
+     * @param header The header text to append.
+     * @param value The value text to append.
+     * @param color The color to apply to the appended text.
+     */
     private static void append(SpannableStringBuilder sb, String header, String value, int color) {
         int start = sb.length();
         sb.append(header).append(value).append("\n");
@@ -73,6 +91,10 @@ public class MainActivity extends Activity {
         sb.setSpan(new ForegroundColorSpan(color), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
 
+    /**
+     * Get the signature of the current application from the API
+     * @return byte[] - Encoded digital signature of the APK, or null if extraction is unsuccessful.
+     */
     private byte[] signatureFromAPI() {
         try {
             @SuppressLint("PackageManagerGetSignatures")
@@ -83,6 +105,18 @@ public class MainActivity extends Activity {
         }
     }
 
+    /**
+     * Extracts the digital signature from the application's APK file as an encoded byte array.
+     *
+     * Utilizes a ZipFile to search the META-INF directory of the APK for signature files
+     * with RSA, DSA, or EC extensions. Upon finding a relevant file, it processes it to
+     * generate an X509Certificate and extracts its encoded form.
+     *
+     * The function returns null if it fails to find a signature file or encounters errors
+     * during processing. Exception details are logged.
+     *
+     * @return byte[] - Encoded digital signature of the APK, or null if extraction is unsuccessful.
+     */
     private byte[] signatureFromAPK() {
         try (ZipFile zipFile = new ZipFile(getPackageResourcePath())) {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
@@ -101,6 +135,20 @@ public class MainActivity extends Activity {
         return null;
     }
 
+    /**
+     * Extracts the digital signature from the application's SVC (service) file as an encoded byte array.
+     *
+     * This function opens the SVC file using `ParcelFileDescriptor.adoptFd` and then reads it
+     * as a ZipInputStream. It iterates through the zip entries to locate signature files within the
+     * META-INF directory, identifiable by their RSA, DSA, or EC extensions. Upon finding a matching
+     * file, the function uses a CertificateFactory to create an X509Certificate and then extracts
+     * its encoded form as the digital signature.
+     *
+     * In case of failure to find a signature file or if any exceptions occur during processing,
+     * the function logs the error details and returns null.
+     *
+     * @return byte[] - Encoded digital signature of the SVC file, or null if unsuccessful in extraction.
+     */
     private byte[] signatureFromSVC() {
         try (ParcelFileDescriptor fd = ParcelFileDescriptor.adoptFd(openAt(getPackageResourcePath()));
              ZipInputStream zis = new ZipInputStream(new FileInputStream(fd.getFileDescriptor()))) {
@@ -118,7 +166,26 @@ public class MainActivity extends Activity {
         return null;
     }
 
-    //
+    private String getAPKPackageName() {
+        return getApplicationContext().getPackageName();
+    }
+
+    /**
+     * Computes the MD5 hash of a given byte array and returns its hexadecimal string representation.
+     *
+     * This function first checks if the input byte array is null, returning the string "null" in that case.
+     * If the input is valid, it calculates the MD5 hash using Java's MessageDigest class. The resulting
+     * hash, a byte array, is then converted into a hexadecimal string. This conversion involves mapping
+     * each byte of the hash to two hexadecimal characters, using a predefined string of hex digits
+     * ("0123456789abcdef"). The function concatenates these characters to form the final MD5 hash string.
+     *
+     * If the MD5 hashing algorithm is not available in the environment (indicated by a
+     * NoSuchAlgorithmException), the function throws a RuntimeException encapsulating the original exception.
+     *
+     * @param bytes The byte array to hash.
+     * @return String - The hexadecimal string representation of the MD5 hash, or "null" if the input is null.
+     * @throws RuntimeException If the MD5 hashing algorithm is not available.
+     */
     private String md5(byte[] bytes) {
         if (bytes == null) {
             return "null";
