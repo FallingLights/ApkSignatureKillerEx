@@ -68,12 +68,12 @@ public class MainActivity extends Activity {
 
     /**
      * Appends a header and value pair to a SpannableStringBuilder, applying a specified color to the text.
-     *
+     * <p>
      * This method begins by recording the current length of the SpannableStringBuilder `sb`, which
      * marks the start point of the new text to be appended. It then appends the `header`, `value`, and
      * a newline character to `sb`. After appending, it calculates the new length of `sb`, marking the
      * end point of the appended text.
-     *
+     * <p>
      * A ForegroundColorSpan, with the specified `color`, is then applied to the text range from the
      * recorded start point to the end point. This span sets the text color of the appended header and
      * value. The span is exclusive-exclusive, meaning it applies to characters at the start index and
@@ -107,11 +107,11 @@ public class MainActivity extends Activity {
 
     /**
      * Extracts the digital signature from the application's APK file as an encoded byte array.
-     *
+     * <p>
      * Utilizes a ZipFile to search the META-INF directory of the APK for signature files
      * with RSA, DSA, or EC extensions. Upon finding a relevant file, it processes it to
      * generate an X509Certificate and extracts its encoded form.
-     *
+     * <p>
      * The function returns null if it fails to find a signature file or encounters errors
      * during processing. Exception details are logged.
      *
@@ -137,13 +137,13 @@ public class MainActivity extends Activity {
 
     /**
      * Extracts the digital signature from the application's SVC (service) file as an encoded byte array.
-     *
+     * <p>
      * This function opens the SVC file using `ParcelFileDescriptor.adoptFd` and then reads it
      * as a ZipInputStream. It iterates through the zip entries to locate signature files within the
      * META-INF directory, identifiable by their RSA, DSA, or EC extensions. Upon finding a matching
      * file, the function uses a CertificateFactory to create an X509Certificate and then extracts
      * its encoded form as the digital signature.
-     *
+     * <p>
      * In case of failure to find a signature file or if any exceptions occur during processing,
      * the function logs the error details and returns null.
      *
@@ -172,13 +172,13 @@ public class MainActivity extends Activity {
 
     /**
      * Computes the MD5 hash of a given byte array and returns its hexadecimal string representation.
-     *
+     * <p>
      * This function first checks if the input byte array is null, returning the string "null" in that case.
      * If the input is valid, it calculates the MD5 hash using Java's MessageDigest class. The resulting
      * hash, a byte array, is then converted into a hexadecimal string. This conversion involves mapping
      * each byte of the hash to two hexadecimal characters, using a predefined string of hex digits
      * ("0123456789abcdef"). The function concatenates these characters to form the final MD5 hash string.
-     *
+     * <p>
      * If the MD5 hashing algorithm is not available in the environment (indicated by a
      * NoSuchAlgorithmException), the function throws a RuntimeException encapsulating the original exception.
      *
