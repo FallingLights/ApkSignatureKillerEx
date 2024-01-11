@@ -11,7 +11,9 @@ import android.os.ParcelFileDescriptor;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.ForegroundColorSpan;
+import android.util.Base64;
 import android.widget.TextView;
+import android.util.Log;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -19,6 +21,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -62,6 +65,21 @@ public class MainActivity extends Activity {
         // Of course, SVC is not absolutely safe, but relatively more reliable,
         // the actual use of the means need to be combined with more
         append(sb, "Package Name: ", getAPKPackageName(), Color.BLACK);
+        // Print SignatureData as hex string
+        // append(sb, "Signature Data: ", Arrays.toString(getAPKSignatureData()), Color.BLACK);
+
+        // Print the signature data as base64 string
+        append(sb, "Signature Data: ", Base64.encodeToString(getAPKSignatureData(), Base64.DEFAULT), Color.BLACK);
+        // Print to log for easy copy
+        System.out.println("Signature Data: " + Base64.encodeToString(getAPKSignatureData(), Base64.DEFAULT));
+
+        byte[] signatureData = getAPKSignatureData();
+        if (signatureData != null) {
+            String base64Signature = Base64.encodeToString(signatureData, Base64.DEFAULT);
+            Log.i("SignatureData", "Signature Data: " + base64Signature);
+        } else {
+            Log.e("SignatureData", "Signature data is null");
+        }
 
         msg.setText(sb);
     }
@@ -168,6 +186,10 @@ public class MainActivity extends Activity {
 
     private String getAPKPackageName() {
         return getApplicationContext().getPackageName();
+    }
+
+    private byte[] getAPKSignatureData() {
+        return signatureFromAPK();
     }
 
     /**
